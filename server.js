@@ -1,8 +1,13 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const path = require('path');
 
 const app = express();
+
+// Tímto řekneš serveru, aby poslal soubory hry (ze složky dist) prohlížeči
+app.use(express.static(path.join(__dirname, 'dist')));
+
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {

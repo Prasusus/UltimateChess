@@ -410,7 +410,7 @@ export function useChessGame() {
       }
     }
 
-    lastMove.value = { from: { r: fromR, c: fromC }, to: { r: toR, c: toC } }
+    lastMove.value = { from: { r: fromR, c: fromC }, to: { r: toR, c: toC }, promotion: promotionType }
 
     board.value[toR][toC] = piece
     board.value[fromR][fromC] = null
