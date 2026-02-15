@@ -2,6 +2,7 @@
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useChessGame } from './chessLogic.js'
 import { useAiLogic } from './aiLogic.js'
+import { io } from "socket.io-client"
 
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 const numbers = [8, 7, 6, 5, 4, 3, 2, 1]
@@ -200,6 +201,22 @@ const onSquareClick = (r, c) => {
   handleSquareClick(r, c)
 }
 
+// --- SOCKET.IO INTEGRACE ---
+const socket = io("https://UltimateChess.onrender.com")
+
+socket.on('chess-move', (move) => {
+  console.log("Přijatý tah zvenčí:", move)
+  // Zde je potřeba implementovat logiku pro provedení tahu, který přišel ze serveru
+  // Např.: game.makeMove(move) nebo podobně, pokud to logika umožňuje
+})
+
+watch(history, (newVal) => {
+  const lastState = newVal[newVal.length - 1]
+  if (lastState && lastState.lastMove) {
+    socket.emit('chess-move', lastState.lastMove)
+  }
+}, { deep: true })
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
   if (props.vsComputer) {
@@ -210,7 +227,10 @@ onMounted(() => {
   }
   setRankedMode(props.isRanked)
 })
-onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+  socket.disconnect()
+})
 </script>
 
 <template>
