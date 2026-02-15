@@ -1,6 +1,7 @@
 {
   "name": "ultimate-chess",
-  "version": "1.0.0",
+
+"version": "1.0.0",
   "description": "Online šachová hra",
   "main": "server.js",
   "scripts": {
@@ -13,6 +14,7 @@
     "express": "^4.18.2",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.8.3",
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "vite": "^5.0.0"
   }
 }
