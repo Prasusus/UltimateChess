@@ -39,7 +39,8 @@ const {
   whiteElo,
   blackElo,
   eloChanges,
-  setRankedMode
+  setRankedMode,
+  boardStyle
 } = game
 
 const { isAiEnabled, setDifficulty } = useAiLogic(game)
@@ -213,7 +214,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 </script>
 
 <template>
-  <div class="game-container">
+  <div class="game-container" :style="boardStyle">
     <div class="game-info-bar">
       <div class="turn-indicator" v-if="!winner">
         Na tahu: <span :class="turn">{{ turn === 'white' ? 'Bílý' : 'Černý' }}</span> <span v-if="isCheck" style="color: #ff4444; font-weight: bold;">(ŠACH!)</span>
@@ -409,7 +410,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   margin-bottom: 20px;
 }
 
@@ -453,16 +455,16 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 .chess-board {
   display: grid;
-  grid-template-columns: 60px repeat(8, 60px) 60px;
-  grid-template-rows: 60px repeat(8, 60px) 60px;
+  grid-template-columns: var(--cell-size, 60px) repeat(8, var(--cell-size, 60px)) var(--cell-size, 60px);
+  grid-template-rows: var(--cell-size, 60px) repeat(8, var(--cell-size, 60px)) var(--cell-size, 60px);
   background-color: #333;
   margin: 0;
   border: 15px solid #555;
   box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 .block { 
-  width: 60px; 
-  height: 60px;
+  width: var(--cell-size, 60px); 
+  height: var(--cell-size, 60px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -472,10 +474,10 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 .square-black { background-color: #b58863; }
 .last-move { background-color: rgba(205, 210, 106, 0.6) !important; }
 .selected { background-color: rgba(82, 176, 227, 0.7) !important; }
-.label { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem; cursor: default; }
+.label { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: var(--label-size, 1.5rem); cursor: default; }
 
 .piece {
-  font-size: 40px;
+  font-size: var(--piece-size, 40px);
   cursor: pointer;
   line-height: 1;
 }
@@ -643,6 +645,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   padding: 20px;
   border: 4px solid #555;
   border-radius: 8px;
+  /* Upraveno pro mobily - na desktopu vedle, na mobilu pod */
   width: 350px;
   flex-shrink: 0;
   position: absolute;
@@ -852,7 +855,8 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   border: 2px solid #555;
   color: white;
   text-align: center;
-  width: 700px;
+  width: 100%;
+  max-width: 700px;
 }
 
 .replay-controls h3 {
@@ -965,5 +969,20 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
   line-height: 1;
   text-shadow: 0 0 3px rgba(0,0,0,0.8);
   border: none !important;
+}
+
+/* Responsivní úpravy pro mobily */
+@media (max-width: 1100px) {
+  .board-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .score-board {
+    position: static;
+    margin-left: 0;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+  }
 }
 </style>

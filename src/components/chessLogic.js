@@ -1,4 +1,5 @@
 import { ref, computed, watch } from 'vue'
+import { useScreenSize } from '../composables/useScreenSize.js'
 
 // Globální stav pro ELO, aby se zachoval i při restartu hry v rámci relace
 const whiteElo = ref(1200)
@@ -70,6 +71,24 @@ export function useChessGame() {
   const isSoundEnabled = ref(true)
   const eloChanges = ref(null)
   const isRankedGame = ref(true)
+
+  // Detekce velikosti obrazovky a škálování
+  const { windowWidth, windowHeight, isMobile } = useScreenSize()
+
+  const boardStyle = computed(() => {
+    // Maximální šířka šachovnice (včetně okrajů a popisků)
+    const maxBoardWidth = 600
+    // Dostupná šířka (okno mínus padding)
+    const availableWidth = Math.min(windowWidth.value - 20, maxBoardWidth)
+    // Výpočet velikosti jednoho políčka (10 sloupců: 8 herních + 2 popisky)
+    const cellSize = Math.floor((availableWidth - 30) / 10) // -30 pro border (2x15px)
+
+    return {
+      '--cell-size': `${cellSize}px`,
+      '--piece-size': `${cellSize * 0.65}px`,
+      '--label-size': `${cellSize * 0.35}px`
+    }
+  })
 
   const startTime = ref(null)
   const elapsedTime = ref(0)
@@ -579,6 +598,8 @@ export function useChessGame() {
     whiteElo,
     blackElo,
     eloChanges,
-    setRankedMode
+    setRankedMode,
+    isMobile,
+    boardStyle
   }
 }
