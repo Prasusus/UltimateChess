@@ -202,15 +202,26 @@ const onSquareClick = (r, c) => {
 }
 
 // --- SOCKET.IO INTEGRACE ---
-const socket = io("https://UltimateChess.onrender.com")
+const socket = io("https://ultimatechess.onrender.com")
+const isRemoteMove = ref(false)
+
+socket.on("connect", () => {
+  console.log("Hurá! Jsem připojen k šachovému serveru. Moje ID:", socket.id);
+});
 
 socket.on('chess-move', (move) => {
   console.log("Přijatý tah zvenčí:", move)
-  // Zde je potřeba implementovat logiku pro provedení tahu, který přišel ze serveru
-  // Např.: game.makeMove(move) nebo podobně, pokud to logika umožňuje
+  if (move && move.from && move.to) {
+    isRemoteMove.value = true
+    performMove(move.from.r, move.from.c, move.to.r, move.to.c, move.promotion)
+  }
 })
 
 watch(history, (newVal) => {
+  if (isRemoteMove.value) {
+    isRemoteMove.value = false
+    return
+  }
   const lastState = newVal[newVal.length - 1]
   if (lastState && lastState.lastMove) {
     socket.emit('chess-move', lastState.lastMove)
